@@ -1,27 +1,100 @@
-import { useState } from 'react'
+import { useState } from "react"
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
 import { Redirect } from 'react-router-dom'
-import Profile from './Profile.jsx'
+import Profile from './Profile'
+import styled from 'styled-components'
+import ViberantLogo from '../img/ViberantLogo.png'
+import { Link } from 'react-router-dom'
 
+const Logo = styled.div `
+    font-size: 2rem;
+    margin: 0 auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    diplay: center;
+    width: 450px;
+    text-align: center;
+    `
+const Links = styled.li `
+    display: inline;
+    margin: 0 auto;
+    margin-right: 10px;
+    font-size: 20px;
+    &:hover {
+        border-bottom: 4px solid #0FC3FC;
+    }    
+`
 
-export default function Register(props) {
-    // state for the controlled from
+const Inputs = styled.input `
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    width: 450px;
+    height: 30px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    padding-left: 5px;
+`
+const TextArea = styled.textarea `
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    width: 450px;
+    height: 30px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    padding-left: 5px;
+`
+
+const Passwords = styled.input `
+    margin: 0 auto;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 20px;
+    width: 220px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    padding-left: 5px;
+`
+const SignupB = styled.input `
+    margin-top: 10px;
+    width: 150px;
+    height: 38px;
+    background: #ff4ba6;
+    margin-bottom: 40px;
+    color: #ffffff;
+    font-family: Poppins;
+    font-size: 18px;
+    font-weight: 900;
+    border-radius: 10px;
+    border: 0;
+`
+
+const Register = (props) => {
+    // state for the controlled form
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [about, setAbout] = useState('')
     // state for the flash message from the server
     const [message, setMessage] = useState('')
 
     // function to handle form submission
-    const handleSubmit = async e => {
+    const handleSubmit = async (e) => {
         try {
             e.preventDefault()
+            console.log('submit the form!')
             // make a request body
             const requestBody = {
                 name: name,
                 email: email,
-                password: password
+                password: password,
+                about: about
             }
 
             // post registration data to the server
@@ -37,61 +110,98 @@ export default function Register(props) {
             const decoded = jwt.decode(token)
 
             // set the user in the App.js state
-            props.setCurrentuser(decoded)
-        } catch (err) {
+            props.setCurrentUser(decoded)
+            
+        } catch (error) {
             // set message if the error is a 400
-            if(err.response.status === 400) {
-                setMessage(err.response.data.msg)
+            if(error.response.status === 400) {
+                setMessage(error.response.data.msg)
             } else {
-                console.log(err)
+                console.log(error)
             }
         }
-        console.log('submit the form! 🥥')
     }
-    // redirect if the user is logged in 
-    if(props.currentUser) return <Redirect to='/profile' component={ Profile } currentUser={ props.currentUser } />
+
+    // redirect if the user is logged in
+    if(props.currentUser) return <Redirect to="/profile" component={Profile} currentUser={props.currentUser} />
+
     return (
         <div>
-            <h3>Registration Form:</h3>
+           <Logo>
+               <img src={ViberantLogo} alt='ViberantLogo' width={454} height={115}></img>
+           </Logo>
+            
+            <ul>
+                <Links>
+                    <Link to="/login" style={{textDecoration:"none", color: "black"}}>I have an account</Link>
+                </Links>
+
+                <Links>
+                    |
+                </Links>
+
+                <Links>
+                    <Link to="/register" style={{textDecoration:"none", color: "black"}}>I'm a new member</Link>
+                </Links>
+            </ul>
 
             <p>{message}</p>
 
             <form onSubmit={handleSubmit}>
-                <label htmlFor='name-input'>Name:</label>
-
-                <input 
-                id='name-input'
-                type='text'
-                placeholder='Enter your name user...'
-                onChange={ e => setName(e.target.value)}
-                value={name}
+                <Inputs
+                    id='name-input'
+                    type='text'
+                    placeholder='Enter your name'
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
                 />
 
-                <label htmlFor='email-input'>Email:</label>
-
-                <input 
-                id='email-input'
-                type='email'
-                placeholder='Enter your email user...'
-                onChange={ e => setEmail(e.target.value)}
-                value={email}
+                <Inputs
+                    id='email-input'
+                    type='email'
+                    placeholder='Enter your email'
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
                 />
 
-                <label htmlFor='password-input'>Password:</label>
-
-                <input 
-                id='password-input'
-                type='password'
-                placeholder='Enter your desired password'
-                onChange={ e => setPassword(e.target.value)}
-                value={password}
+                <Inputs
+                    id='name-input'
+                    type='number'
+                    placeholder='Phone Number'
                 />
 
-                <input 
-                type='submit'
-                value='Make New Account'
+                <Passwords
+                    id='password-input'
+                    type='password'
+                    placeholder='Desired Password'
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
                 />
+                
+                <Passwords
+                    id='password-input'
+                    type='password'
+                    placeholder='Password Confirm'
+                />
+
+                <TextArea
+                    style={{width: "450px", height: "200px", margin: "0 auto", border: "1px solid lightgrey", borderRadius: "10px"}}
+                    id='about-input'
+                    type='about'
+                    placeholder='Tell us about yourself!'
+                    onChange={(e) => setAbout(e.target.value)}
+                    value={about}
+                    required
+                />
+                    
+                <br />
+
+                <SignupB type='submit' value='SIGN UP' />
+
+                <p>Already have an account? <strong>Log in</strong></p>
             </form>
         </div>
     )
 }
+
+export default Register
